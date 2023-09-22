@@ -1,0 +1,43 @@
+<mxfile host="Electron" modified="2023-09-18T11:07:52.537Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.7.5 Chrome/114.0.5735.289 Electron/25.8.1 Safari/537.36" etag="6rRsq7jmqiWOFhPqojPl" version="21.7.5" type="device">
+  <diagram name="Page-1" id="8-ttuDAwuNLBuiKoMGlH">
+    <mxGraphModel dx="1404" dy="829" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="KmRNf8lELqbl2tZDOQCN-2" target="KmRNf8lELqbl2tZDOQCN-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-2" value="Connector / Dataloader" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-5" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="150" y="40" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-1" value="Scheduler" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingRight=0;spacingLeft=35;" vertex="1" parent="KmRNf8lELqbl2tZDOQCN-5">
+          <mxGeometry width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-3" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.partConcEllipse;startAngle=0.25;endAngle=0.1;arcWidth=0.5;" vertex="1" parent="KmRNf8lELqbl2tZDOQCN-5">
+          <mxGeometry x="10" y="10" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-6" value="SQLite&lt;br&gt;weather&lt;br&gt;database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="540" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="KmRNf8lELqbl2tZDOQCN-7" target="KmRNf8lELqbl2tZDOQCN-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-7" value="Wheatr API" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="160" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="KmRNf8lELqbl2tZDOQCN-8" target="KmRNf8lELqbl2tZDOQCN-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-8" value="Calculator" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="160" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="KmRNf8lELqbl2tZDOQCN-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="KmRNf8lELqbl2tZDOQCN-1" target="KmRNf8lELqbl2tZDOQCN-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

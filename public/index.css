@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 1em;
+    /*! text-align: center; */
+    /*! display: flex; */
+    /*! gap: 4em; */
+}
+
+#stations {
+    font-size: .75em;
+    position: fixed;
+    bottom: 1em;
+}
+
+#hi {
+    display: flex;
+    gap: .5em;
+}
+
+#hi>div {
+    height: 1em;
+    width: 1em;
+}
+
+#app-root {
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+    margin: 3em;
+    align-items: center;
+}
