@@ -2,6 +2,10 @@ use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
 
+pub trait ToSqlParams {
+    fn to_sql_params(&self) -> (String, String, String, String);
+}
+
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Station {
     pub id: String,
@@ -11,7 +15,21 @@ pub struct Station {
 }
 impl Display for Station {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Station {} ({}) on {}, {}", self.name, self.id, self.lat, self.lon)
+        write!(
+            f,
+            "Station {} ({}) on {}, {}",
+            self.name, self.id, self.lat, self.lon
+        )
+    }
+}
+impl ToSqlParams for Station {
+    fn to_sql_params(&self) -> (String, String, String, String) {
+        (
+            self.id.clone(),
+            self.name.clone(),
+            self.lat.to_string(),
+            self.lon.to_string(),
+        )
     }
 }
 
@@ -25,7 +43,21 @@ pub struct Observation {
 
 impl Display for Observation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Observation of {} at {}: temp/hum {}/{} ", self.station_id, self.observation_time, self.aerial_temperature, self.relative_humidity)
+        write!(
+            f,
+            "Observation of {} at {}: temp/hum {}/{} ",
+            self.station_id, self.observation_time, self.aerial_temperature, self.relative_humidity
+        )
+    }
+}
+impl ToSqlParams for Observation {
+    fn to_sql_params(&self) -> (String, String, String, String) {
+        (
+            self.station_id.clone(),
+            self.observation_time.clone(),
+            self.aerial_temperature.to_string(),
+            self.relative_humidity.to_string(),
+        )
     }
 }
 

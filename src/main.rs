@@ -11,17 +11,21 @@ mod connectors;
 mod met;
 
 fn update_meteo_db() {
+    println!("Meteo data downloading started");
     let start = Instant::now();
-    println!("Meteo data processing...");
-    let meteo_data = connectors::aemet_connector::load_data();
-        // let meteo_data = connectors::aemet_connector::get_meteo_data();
-    match meteo_data {
-        Err(e) => { println!("Meteo data processing failed. {}", e); }
-        Ok(meteo_data) => {
-            connectors::db_writer::write_to_database(&meteo_data);
-        }
+    let meteo_data = match connectors::aemet_connector::load_data() {
+        Ok(md) => md,
+        Err(e) => { println!("Meteo data downloading failed. {}", e); return; }
     };
-    println!("Meteo data processing finished in {:?}", start.elapsed());
+    println!("Meteo data downloading finished in {:?}", start.elapsed());
+
+    println!("Meteo data persisting started");
+    let start = Instant::now();
+    match connectors::db_writer::write_to_database(&meteo_data) {
+        Ok(_) => (),
+        Err(e) => { println!("Meteo data persisting failed. {}", e); return; }
+    };
+    println!("Meteo data persisting finished in {:?}", start.elapsed());
 }
 
 fn read_query_params(req: Request<()>) -> Result<Location, Error> {

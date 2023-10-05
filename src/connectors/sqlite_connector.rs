@@ -1,18 +1,16 @@
-use std::{io::Error, collections::HashMap};
+use std::{collections::HashMap, io::Error};
 
 use rusqlite::{Connection, Rows, ToSql};
 
-use crate::met::{Observation, Station, Location};
+use crate::met::{Location, Observation, Station, ToSqlParams};
 
 const STMT_GET_CLOSEST_STATIONS: &str = "SELECT id, name, lat, lon, (ABS(lat)-:my_lat) * (ABS(lat)-:my_lat) + (ABS(lon)-:my_lon) * (ABS(lon)-:my_lon) as diff FROM stations GROUP BY lat, lon ORDER BY diff ASC LIMIT 3";
 const STMT_GET_LATEST_OBSERVATIONS: &str =  "SELECT * FROM observations WHERE station_id IN (:s1, :s2, :s3) ORDER BY observation_time DESC, station_id ASC LIMIT 12";
-const STMT_GET_OBSERVATION: &str = "SELECT station_id FROM observations where station_id=:station_id AND observation_time=:observation_time";
-const STMT_GET_STATION: &str = "SELECT id FROM stations WHERE id=:id";
 const STMT_SET_STATION: &str =
-    "INSERT INTO stations (id, name, lat, lon) VALUES (:id, :name, :lat, :lon)";
-const STMT_SET_OBSERVATION: &str = "INSERT INTO observations (station_id, observation_time, air_temperature, rel_humidity) VALUES (:station_id, :observation_time, :air_temperature, :rel_humidity)";
+    "INSERT INTO stations (id, name, lat, lon) VALUES (:id, :name, :lat, :lon) ON CONFLICT (id) DO NOTHING";
+const STMT_SET_OBSERVATION: &str = "INSERT INTO observations (station_id, observation_time, air_temperature, rel_humidity) VALUES (:station_id, :observation_time, :air_temperature, :rel_humidity) ON CONFLICT (station_id, observation_time) DO NOTHING";
 
-fn get_connection() -> Result<Connection, rusqlite::Error> {
+pub fn get_connection() -> Result<Connection, rusqlite::Error> {
     let connection = Connection::open(".met.sqlite")?;
     connection.execute_batch(
         "BEGIN;
@@ -102,7 +100,9 @@ pub fn get_latest_observations(stations: &[Station; 3]) -> Result<[Observation; 
                         relative_humidity: row.get_unwrap("rel_humidity"),
                     };
                     let prev_obs = latest_observations_map.get(&new_obs.station_id);
-                    if prev_obs.is_none() || prev_obs.unwrap().observation_time < new_obs.observation_time {
+                    if prev_obs.is_none()
+                        || prev_obs.unwrap().observation_time < new_obs.observation_time
+                    {
                         latest_observations_map.insert(new_obs.station_id.clone(), new_obs);
                     }
                 }
@@ -136,73 +136,42 @@ pub fn get_latest_observations(stations: &[Station; 3]) -> Result<[Observation; 
     }
 }
 
-fn write_item_to_db<T>(
-    read_statement: &str,
-    read_params: &[(&str, &dyn ToSql)],
+fn write_items_to_db<T: ToSqlParams>(
+    items: &Vec<T>,
     write_statement: &str,
-    write_params: &[(&str, &dyn ToSql)],
-) -> Result<(), Error> {
-    let connection = match get_connection() {
-        Ok(conn) => conn,
+) -> Result<(), rusqlite::Error> {
+    let mut connection = get_connection()?;
+    let transaction = connection.transaction()?;
+    for item in items {
+        let params = item.to_sql_params();
+        transaction.execute(write_statement, params)?;
+    }
+    transaction.commit()?;
+    Ok(())
+}
+
+pub fn write_stations_to_db(stations: &Vec<Station>) -> Result<(), Error> {
+    match write_items_to_db::<Station>(stations, STMT_SET_STATION) {
+        Ok(_) => return Ok(()),
         Err(err) => {
-            return Err(Error::new(
-                std::io::ErrorKind::Other,
-                format!("Data saving failed: {}", err),
-            ))
-        }
-    };
-    match connection.query_row(read_statement, read_params, |row| {
-        row.get::<usize, String>(0)
-    }) {
-        Ok(_) => {
-            return Ok(());
-        }
-        Err(rusqlite::Error::QueryReturnedNoRows) => (),
-        Err(err) => {
+            println!("Error with connection: {}", err);
             return Err(Error::new(
                 std::io::ErrorKind::Other,
                 format!("Data saving failed: {}", err),
             ));
         }
     };
-    match connection.execute(write_statement, write_params) {
+}
+
+pub fn write_observations_to_db(observations: &Vec<Observation>) -> Result<(), Error> {
+    match write_items_to_db::<Observation>(observations, STMT_SET_OBSERVATION) {
         Ok(_) => return Ok(()),
         Err(err) => {
+            println!("Error with connection: {}", err);
             return Err(Error::new(
                 std::io::ErrorKind::Other,
                 format!("Data saving failed: {}", err),
-            ))
+            ));
         }
     };
-}
-
-pub fn write_station_to_db(station: &Station) -> Result<(), Error> {
-    write_item_to_db::<&Station>(
-        STMT_GET_STATION,
-        &[(":id", &station.id)],
-        STMT_SET_STATION,
-        &[
-            (":id", &station.id),
-            (":name", &station.name),
-            (":lat", &station.lat.to_string()),
-            (":lon", &station.lon.to_string()),
-        ],
-    )
-}
-
-pub fn write_observation_to_db(observation: &Observation) -> Result<(), Error> {
-    write_item_to_db::<&Observation>(
-        STMT_GET_OBSERVATION,
-        &[
-            (":station_id", &observation.station_id),
-            (":observation_time", &observation.observation_time),
-        ],
-        STMT_SET_OBSERVATION,
-        &[
-            (":station_id", &observation.station_id),
-            (":observation_time", &observation.observation_time),
-            (":air_temperature", &observation.aerial_temperature),
-            (":rel_humidity", &observation.relative_humidity),
-        ],
-    )
 }
